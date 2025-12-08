@@ -1,0 +1,8 @@
+teleop_twist_joy_node:
+  ros__parameters:
+    axis_linear:  1  # 왼쪽 스틱 위/아래 (전진/후진)
+    axis_angular: 3  # 오른쪽 스틱 좌/우 (회전) - 조종기마다 0, 2, 3 중 하나일 수 있음
+    scale_linear: 0.5  # 최대 전진 속도 (m/s)
+    scale_angular: 1.0 # 최대 회전 속도 (rad/s)
+    enable_button: 4  # 이 버튼을 누르고 있어야 움직임 (L1 또는 L2 버튼 추정)
+    require_enable_button: true
