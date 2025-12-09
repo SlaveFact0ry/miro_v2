@@ -1,0 +1,34 @@
+ekf_filter_node:
+  ros__parameters:
+    frequency: 30.0
+    two_d_mode: true    # 2D (x, y, yaw)만 고려
+    publish_tf: true    # odom -> base_link TF 발행
+    
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    # -------------------------------------
+    # Input 1: Lidar Odometry 
+    # -------------------------------------
+    odom0: /odom_rf2o
+    odom0_config: [true,  true,  false,   # X, Y, 
+                   false, false, true,    # R, P, Yaw 
+                   true,  true,  false,   # dX, dY, dZ 
+                   false, false, true,    # dR, dP, dYaw
+                   false, false, false]   # accel
+    odom0_differential: false
+    odom0_relative: false
+
+    # -------------------------------------
+    # Input 2: MPU-9250
+    # -------------------------------------
+    imu0: /imu/data
+    imu0_config: [false, false, false,    # X, Y, Z
+                  false, false, true,     # Roll, Pitch, Yaw
+                  false, false, false,    # dX, dY, dZ
+                  false, false, true,     # dR, dP, dYaw
+                  false, false, false]    # accel
+    imu0_differential: false
+    imu0_relative: true 
