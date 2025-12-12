@@ -1,0 +1,22 @@
+# Feedback Monitor Configuration
+# Real-time velocity feedback and monitoring parameters
+
+feedback_monitor:
+  ros__parameters:
+    # Update rates
+    feedback_rate_hz: 10.0          # Feedback publication rate (Hz)
+    stats_rate_hz: 1.0              # Statistics publication rate (Hz)
+
+    # Error thresholds for status determination
+    error_threshold_green: 0.05     # Green status: error < 5%
+    error_threshold_yellow: 0.10    # Yellow status: error < 10%, Red: >= 10%
+
+    # Statistics window
+    stats_window_sec: 10.0          # Sliding window duration for statistics (seconds)
+
+    # Terminal output configuration
+    enable_terminal_output: true    # Enable/disable terminal output
+    use_ansi_colors: true           # Use ANSI color codes in terminal
+
+    # Error calculation parameters
+    min_velocity_threshold: 0.01    # Minimum velocity for percentage calculation (m/s or rad/s)

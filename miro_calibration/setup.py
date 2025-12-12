@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'speed_preset_manager = miro_calibration.speed_preset_manager:main',
+            'feedback_monitor = miro_calibration.feedback_monitor:main',
         ],
     },
 )

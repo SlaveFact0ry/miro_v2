@@ -19,6 +19,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ValidationReport.msg"
   "msg/PathProgress.msg"
   "msg/SpeedMode.msg"
+  "msg/VelocityFeedback.msg"
+  "msg/VelocityStats.msg"
   DEPENDENCIES builtin_interfaces geometry_msgs
 )
 
