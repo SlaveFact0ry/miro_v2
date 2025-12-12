@@ -14,7 +14,13 @@ find_package(sensor_msgs REQUIRED)
 install(DIRECTORY
   launch
   config
+  docs
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(PROGRAMS
+  scripts/verify_imu.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 

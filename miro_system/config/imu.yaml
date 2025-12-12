@@ -1,0 +1,173 @@
+# IMU Configuration for Autonomous Pool Cleaning Robot
+#
+# ARCHITECTURE: IMU (MPU9250) is connected to ESP32 running micro-ROS.
+# The ESP32 publishes /imu/data at ~20Hz via micro-ROS agent on Raspberry Pi.
+#
+# This configuration file contains parameters for:
+# - Expected IMU topic parameters
+# - Sensor covariance matrices for EKF fusion
+# - Safety monitoring thresholds
+# - TF transform parameters
+#
+# Publishing Rate: ~20Hz (50ms timer on ESP32 firmware)
+# Frame Convention: REP-103 (X-forward, Y-left, Z-up, right-hand rule)
+# Target Accuracy: <2 degrees heading accuracy (after sensor fusion)
+
+/**:
+  ros__parameters:
+    # ============================================================================
+    # micro-ROS IMU Topic Configuration
+    # ============================================================================
+    # IMU data comes from ESP32 micro-ROS node via /imu/data topic
+    # ESP32 configuration is in firmware (see docs/esp32-microros-setup.md)
+
+    # Expected topic name (published by ESP32)
+    imu_topic: "/imu/data"
+
+    # Expected frame ID for IMU data (must match TF tree and ESP32 firmware)
+    frame_id: "imu_link"
+
+    # Expected publishing rate from ESP32 (Hz)
+    expected_publish_rate: 20.0  # 50ms timer in ESP32 firmware
+
+    # Frequency tolerance for diagnostics (Hz)
+    frequency_tolerance: 2.0  # Accept 18-22 Hz
+
+    # micro-ROS agent connection parameters
+    # These are configured in microros_agent.launch.py
+    microros:
+      # Serial device for ESP32 (typically /dev/ttyACM0)
+      device: "/dev/ttyACM0"
+      baudrate: 115200
+      transport: "serial"  # or "udp4" for WiFi
+
+    # ============================================================================
+    # Sensor Covariance Matrices
+    # ============================================================================
+    # These values represent measurement uncertainty for the sensor fusion system.
+    # Used by robot_localization EKF (Task 004) to fuse IMU with odometry.
+    #
+    # NOTE: ESP32 firmware publishes RAW IMU data (accel + gyro only).
+    # Orientation quaternion is NOT calculated on ESP32, it's set to identity.
+    # Orientation fusion will be done on Raspberry Pi using imu_complementary_filter
+    # or robot_localization EKF.
+
+    # Orientation covariance (quaternion) [rad²]
+    # Format: [xx, xy, xz, yx, yy, yz, zx, zy, zz]
+    # For diagonal matrix: [roll², 0, 0, 0, pitch², 0, 0, 0, yaw²]
+    #
+    # Since ESP32 doesn't provide orientation, set to -1 (unknown)
+    # EKF will calculate orientation from angular velocity and linear acceleration
+    orientation_covariance: [
+      -1.0, 0.0,  0.0,
+      0.0,  -1.0, 0.0,
+      0.0,  0.0,  -1.0
+    ]
+
+    # Angular velocity covariance (gyroscope) [rad²/s²]
+    # MPU9250 gyroscope characteristics (after calibration):
+    # - Range: ±500 deg/s (configurable in ESP32 firmware)
+    # - Noise density: ~0.01 deg/s/√Hz
+    # - At 20Hz: ~0.001 rad²/s²
+    angular_velocity_covariance: [
+      0.001, 0.0,   0.0,
+      0.0,   0.001, 0.0,
+      0.0,   0.0,   0.001
+    ]
+
+    # Linear acceleration covariance (accelerometer) [m²/s⁴]
+    # MPU9250 accelerometer characteristics:
+    # - Range: ±4g (configurable in ESP32 firmware)
+    # - Noise density: ~0.3 mg/√Hz
+    # - At 20Hz: ~0.01 m²/s⁴
+    linear_acceleration_covariance: [
+      0.01, 0.0,  0.0,
+      0.0,  0.01, 0.0,
+      0.0,  0.0,  0.01
+    ]
+
+    # ============================================================================
+    # ESP32 MPU9250 Firmware Configuration Reference
+    # ============================================================================
+    # These parameters are configured in the ESP32 firmware, not on ROS2 side.
+    # Listed here for documentation purposes.
+    # See docs/esp32-microros-setup.md for how to modify these in firmware.
+
+    esp32_mpu9250:
+      # Gyroscope full-scale range (configured in ESP32 firmware)
+      # Options: 250, 500, 1000, 2000 deg/s
+      # Current: 500 deg/s (sufficient for pool cleaning robot)
+      gyro_range: 500
+
+      # Accelerometer full-scale range (configured in ESP32 firmware)
+      # Options: 2, 4, 8, 16 g
+      # Current: 4g (sufficient for tilt detection)
+      accel_range: 4
+
+      # Digital Low-Pass Filter (DLPF) bandwidth
+      # Options: 5, 10, 20, 42, 98, 188, 256 Hz
+      # Recommended: 20-42 Hz for balance between noise and latency
+      dlpf_bandwidth: 20
+
+      # Magnetometer (MPU9250 has built-in AK8963 magnetometer)
+      # Current firmware: NOT USED (not initialized)
+      # Future: Can be enabled for better heading accuracy
+      use_magnetometer: false
+
+      # Calibration (performed on ESP32 side)
+      # Gyroscope bias calibration: mpu.calibrateGyro() in firmware
+      # Accelerometer/magnetometer: Can be added to firmware if needed
+      calibrate_on_startup: true  # Gyro calibration runs in mpu.begin()
+
+    # ============================================================================
+    # Safety Monitoring Parameters
+    # ============================================================================
+    # These parameters are used by the safety supervisor (Task 073)
+
+    # Maximum allowable tilt angles (degrees)
+    # Pool cleaning robot should stay relatively level on water surface
+    # Exceeding these limits triggers emergency stop
+    max_roll: 15.0   # Roll (left-right tilt)
+    max_pitch: 15.0  # Pitch (forward-backward tilt)
+
+    # Timeout for IMU data (seconds)
+    # Triggers fault if no data received within this time
+    # At 20Hz, 0.5s = 10 missed messages (reasonable for safety)
+    imu_timeout: 0.5
+
+    # Enable tilt safety monitoring
+    enable_tilt_safety: true
+
+    # ============================================================================
+    # TF Transform Parameters
+    # ============================================================================
+    # Static transform: base_link -> imu_link
+    # Defined in static_transforms.launch.py
+    # Listed here for reference
+
+    tf_transform:
+      # IMU position relative to base_link (meters)
+      position:
+        x: 0.0   # At robot center (forward/backward)
+        y: 0.0   # At robot center (left/right)
+        z: 0.05  # 5cm above base_link (ESP32 board height)
+
+      # IMU orientation relative to base_link (radians)
+      # Assuming IMU is mounted aligned with robot frame
+      orientation:
+        roll: 0.0   # No rotation around X
+        pitch: 0.0  # No rotation around Y
+        yaw: 0.0    # No rotation around Z
+
+    # ============================================================================
+    # Diagnostic Parameters
+    # ============================================================================
+
+    # Publish diagnostic information
+    publish_diagnostics: true
+
+    # Enable data quality monitoring
+    enable_quality_monitoring: true
+
+    # Log warnings for data quality issues
+    log_quality_warnings: true
