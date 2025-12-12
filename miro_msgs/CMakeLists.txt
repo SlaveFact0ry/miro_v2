@@ -18,6 +18,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CoverageStatus.msg"
   "msg/ValidationReport.msg"
   "msg/PathProgress.msg"
+  "msg/SpeedMode.msg"
   DEPENDENCIES builtin_interfaces geometry_msgs
 )
 

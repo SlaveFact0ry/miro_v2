@@ -22,8 +22,8 @@ def generate_launch_description():
 
     frame_id_arg = DeclareLaunchArgument(
         'frame_id',
-        default_value='laser_frame',
-        description='Frame ID for laser scan data'
+        default_value='laser',
+        description='Frame ID for laser scan data (matches static_transforms.launch.py)'
     )
 
     scan_mode_arg = DeclareLaunchArgument(
@@ -67,15 +67,8 @@ def generate_launch_description():
         }]
     )
 
-    # Static transform publisher for laser frame
-    # This should match the transform defined in miro.launch.py
-    # Position: 0.15m forward, 0.1m up, pitched down 10 degrees (0.1745 rad)
-    laser_frame_publisher = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='base_to_laser',
-        arguments=['0.15', '0', '0.1', '0', '0.1745', '0', 'base_link', 'laser_frame']
-    )
+    # Note: Static transform base_link -> laser is published by static_transforms.launch.py
+    # This launch file only starts the RPLIDAR driver node
 
     return LaunchDescription([
         # Launch arguments
@@ -84,6 +77,5 @@ def generate_launch_description():
         scan_mode_arg,
 
         # Nodes
-        laser_frame_publisher,
         rplidar_node,
     ])

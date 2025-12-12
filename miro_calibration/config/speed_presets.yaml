@@ -1,0 +1,28 @@
+# Speed Preset Configuration for MIRO v2 Calibration System
+#
+# This file defines the joystick button mappings and speed values
+# for the three fixed speed presets used during calibration.
+
+speed_preset_manager:
+  ros__parameters:
+    # Joystick button indices (PS4 controller button numbers)
+    # Button 0 = X, Button 1 = Circle, Button 2 = Triangle
+    button_slow: 0      # Button for slow preset (X button)
+    button_medium: 1    # Button for medium preset (Circle button)
+    button_fast: 2      # Button for fast preset (Triangle button)
+
+    # Linear speed values (m/s)
+    speed_slow: 0.1     # Slow preset: 0.1 m/s
+    speed_medium: 0.2   # Medium preset: 0.2 m/s (default)
+    speed_fast: 0.3     # Fast preset: 0.3 m/s
+
+    # Angular speed values (rad/s)
+    angular_slow: 0.2   # Slow preset: 0.2 rad/s (~11 deg/s)
+    angular_medium: 0.4 # Medium preset: 0.4 rad/s (~23 deg/s)
+    angular_fast: 0.6   # Fast preset: 0.6 rad/s (~34 deg/s)
+
+    # Default preset on startup
+    default_preset: "medium"  # Options: "slow", "medium", "fast"
+
+    # Debounce time (seconds) to prevent multiple triggers
+    debounce_time: 0.3
