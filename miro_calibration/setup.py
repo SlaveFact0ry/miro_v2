@@ -26,6 +26,8 @@ setup(
         'console_scripts': [
             'speed_preset_manager = miro_calibration.speed_preset_manager:main',
             'feedback_monitor = miro_calibration.feedback_monitor:main',
+            'sensor_health_monitor = miro_calibration.sensor_health_monitor:main',
+            'data_logger = miro_calibration.data_logger:main',
         ],
     },
 )

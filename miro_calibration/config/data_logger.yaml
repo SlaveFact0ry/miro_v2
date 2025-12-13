@@ -1,0 +1,53 @@
+# Data Logger Configuration
+# Manages rosbag2 recording of calibration data with session management
+
+data_logger:
+  ros__parameters:
+    # Storage Configuration
+    calibration_data_dir: "${HOME}/miro_calibration_data"
+    compression: "zstd"               # Compression algorithm (zstd, lz4, none)
+    storage_preset: "sqlite3"         # Storage backend (sqlite3, mcap)
+
+    # Topic Configuration
+    # All topics to be recorded during calibration sessions
+    record_topics:
+      # Transform data (critical for coordinate systems)
+      - "/tf"
+      - "/tf_static"
+
+      # Odometry (filtered output from EKF)
+      - "/odometry/filtered"
+
+      # Command velocity (what we're commanding)
+      - "/cmd_vel"
+
+      # Sensor raw data
+      - "/scan"                       # RPLIDAR laser scans
+      - "/imu/data"                   # IMU sensor data
+
+      # Calibration feedback topics
+      - "/calibration/speed_mode"          # Current speed preset
+      - "/calibration/velocity_feedback"   # Real-time velocity comparison
+      - "/calibration/velocity_stats"      # Statistics over time window
+
+      # Sensor health monitoring
+      - "/calibration/sensor_status"       # Overall sensor health
+      - "/calibration/rplidar_stats"       # Detailed RPLIDAR metrics
+      - "/calibration/imu_stats"           # Detailed IMU metrics
+
+      # Test orchestration (future - Task 005)
+      # - "/calibration/test_progress"
+      # - "/calibration/test_result"
+
+    # Storage Management
+    max_sessions_to_keep: 20          # Maximum number of sessions to retain
+    max_storage_gb: 10.0              # Maximum total storage size (GB)
+    min_disk_space_gb: 1.0            # Minimum free disk space before warning (GB)
+
+    # Session Metadata
+    robot_id: "miro_v2_001"           # Robot identifier
+    operator_name: "default"          # Operator name (override via parameter)
+    node_version: "1.0.0"             # Data logger version
+
+    # Status Publishing
+    status_publish_rate_hz: 1.0       # Rate to publish recording status

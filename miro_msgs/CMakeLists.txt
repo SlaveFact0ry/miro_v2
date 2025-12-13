@@ -21,6 +21,13 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/SpeedMode.msg"
   "msg/VelocityFeedback.msg"
   "msg/VelocityStats.msg"
+  "msg/SensorStatus.msg"
+  "msg/RPLIDARStats.msg"
+  "msg/IMUStats.msg"
+  "msg/RecordingStatus.msg"
+  "srv/StartRecording.srv"
+  "srv/StopRecording.srv"
+  "srv/GetRecordingStatus.srv"
   DEPENDENCIES builtin_interfaces geometry_msgs
 )
 

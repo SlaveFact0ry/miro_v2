@@ -1,0 +1,10 @@
+# GetRecordingStatus.srv
+# Service to get current recording status
+
+# Request
+# (empty - no request parameters needed)
+
+---
+
+# Response
+miro_msgs/RecordingStatus status    # Current recording status

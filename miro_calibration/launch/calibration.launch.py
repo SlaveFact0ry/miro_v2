@@ -3,6 +3,8 @@ Calibration System Launch File for MIRO v2
 
 Launches the calibration system components including:
 - Speed Preset Manager: Fixed speed control via joystick buttons
+- Sensor Health Monitor: Monitor RPLIDAR and IMU sensor health
+- Data Logger: Record calibration sessions to rosbag2
 - Joy Node: Joystick hardware interface (optional, may already be running)
 
 Usage:
@@ -31,6 +33,18 @@ def generate_launch_description():
         FindPackageShare('miro_calibration'),
         'config',
         'speed_presets.yaml'
+    ])
+
+    sensor_monitor_config = PathJoinSubstitution([
+        FindPackageShare('miro_calibration'),
+        'config',
+        'sensor_monitor.yaml'
+    ])
+
+    data_logger_config = PathJoinSubstitution([
+        FindPackageShare('miro_calibration'),
+        'config',
+        'data_logger.yaml'
     ])
 
     # Launch arguments
@@ -68,6 +82,24 @@ def generate_launch_description():
         parameters=[speed_presets_config]
     )
 
+    # Sensor Health Monitor node
+    sensor_health_monitor_node = Node(
+        package='miro_calibration',
+        executable='sensor_health_monitor',
+        name='sensor_health_monitor',
+        output='screen',
+        parameters=[sensor_monitor_config]
+    )
+
+    # Data Logger node
+    data_logger_node = Node(
+        package='miro_calibration',
+        executable='data_logger',
+        name='data_logger',
+        output='screen',
+        parameters=[data_logger_config]
+    )
+
     return LaunchDescription([
         # Launch arguments
         launch_joy_arg,
@@ -76,4 +108,6 @@ def generate_launch_description():
         # Nodes
         joy_node,
         speed_preset_manager_node,
+        sensor_health_monitor_node,
+        data_logger_node,
     ])

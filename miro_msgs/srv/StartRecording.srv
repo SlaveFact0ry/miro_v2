@@ -1,0 +1,13 @@
+# StartRecording.srv
+# Service to start rosbag2 recording
+
+# Request
+string session_name    # Optional custom session name suffix (empty for auto-generated)
+
+---
+
+# Response
+bool success           # True if recording started successfully
+string message         # Status/error message
+string session_id      # Generated session ID (format: YYYYMMDD_HHMMSS)
+string storage_path    # Full path to session directory

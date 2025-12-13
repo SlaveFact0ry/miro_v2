@@ -1,0 +1,28 @@
+# Sensor Health Monitor Configuration
+# Configuration for RPLIDAR and IMU sensor health monitoring during calibration
+
+sensor_health_monitor:
+  ros__parameters:
+    # Expected sensor rates
+    rplidar_expected_hz: 10.0     # RPLIDAR A1 typical scan rate
+    imu_expected_hz: 20.0         # MPU6050 typical output rate
+
+    # Rate tolerance
+    rate_tolerance_percent: 20.0  # ±20% tolerance for rate variation
+
+    # Sensor timeout detection
+    sensor_timeout_sec: 1.0       # Sensor considered disconnected after 1 second
+
+    # RPLIDAR quality thresholds
+    min_points: 100               # Minimum expected points per scan
+    max_range_variance: 0.5       # Maximum acceptable range variance (meters²)
+
+    # IMU quality thresholds
+    max_gyro_bias: 0.02           # Maximum acceptable gyro bias (rad/s)
+    max_accel_noise: 0.5          # Maximum acceptable acceleration noise (m/s²)
+
+    # Publishing rates
+    status_publish_rate_hz: 1.0   # Status message publish rate
+
+    # Frequency calculation window
+    frequency_window_sec: 5.0     # Sliding window duration for frequency calculation
